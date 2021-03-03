@@ -125,7 +125,7 @@ def task_setup():
                     do(*PIP, "check"),
                 ],
             )
-            if path == REPOS.get("jupyterlab"):
+            if path == PATHS.get("jupyterlab"):
                 yield dict(
                     name=f"server:{path.name}",
                     file_dep=py_deps,
