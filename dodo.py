@@ -204,7 +204,7 @@ def task_app():
                     [],
                 ),
             ],
-            actions=[do(*YARN, "build", cwd=dev_mode)],
+            actions=[do(*YARN, "clean", cwd=dev_mode), do(*YARN, "build:prod", cwd=dev_mode)],
             targets=[dev_index],
         )
 
