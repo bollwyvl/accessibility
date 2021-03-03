@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 doit list --all --status
 
-time doit clone |& tee doit.clone.log
-time doit setup |& tee doit.setup.log
-time doit link |& tee doit.link.log
-time doit app |& tee doit.app.log
+mkdir logs
+
+time doit clone |& tee logs/00.clone.log
+time doit setup |& tee logs/01.setup.log
+time doit link  |& tee logs/02.link.log
+time doit app   |& tee logs/03.app.log
 
 doit list --all --status
