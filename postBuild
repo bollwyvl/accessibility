@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+set -eux
 doit list --all --status
 
-mkdir logs
+mkdir -p logs
 
 time doit clone |& tee logs/00.clone.log
 time doit setup |& tee logs/01.setup.log

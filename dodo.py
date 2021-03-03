@@ -69,19 +69,26 @@ def task_clone():
             targets=[config],
         )
 
-        for i, ref in enumerate(spec["refs"]):
+        refs = spec["refs"]
+        for i, ref in enumerate(refs):
             task_dep = []
             actions = [do("git", "fetch", "origin", ref["ref"], cwd=path)]
-            if i:
-                task_dep += [f"""clone:fetch:{name}:{i-1}:{ref["refs"][i - 1]}"""]
-                actions += [do("git", "merge", f"""origin/{ref["commit"]}""")]
+            commit = ref.get("commit") or ref["ref"]
+            targets = []
+            if i == 0:
+                actions += [do("git", "checkout", "-f", commit, cwd=path)]
             else:
-                actions += [do("git", "checkout", "-f", ref["commit"], cwd=path)]
+                prev = refs[i - 1]
+                task_dep += [f"""clone:fetch:{name}:{i-1}:{prev["ref"]}"""]
+                actions += [do("git", "merge", "--commit", commit, cwd=path)]
+
+            if i == len(refs) - 1:
+                targets = [head]
 
             yield dict(
-                name=f"""fetch:{name}:{i}:{ref["ref"]}:{ref["commit"]}""",
+                name=f"""fetch:{name}:{i}:{ref["ref"]}""",
                 file_dep=[config],
-                targets=[head],
+                targets=targets,
                 task_dep=task_dep,
                 actions=actions,
             )
