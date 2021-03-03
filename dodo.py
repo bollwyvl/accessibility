@@ -63,7 +63,7 @@ def task_clone():
             if path.exists()
             else [
                 (doit.tools.create_folder, [path]),
-                do("git", "init", cwd=path),
+                do("git", "init", "-b", "work", cwd=path),
                 do("git", "remote", "add", "origin", spec["origin"], cwd=path),
                 do("git", "config", "user.email", "a11y@jupyter.org", cwd=path),
                 do("git", "config", "advice.detachedHead", "false", cwd=path),
