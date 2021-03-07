@@ -31,13 +31,15 @@ LINKS = (HERE / "repos/.yarn-links").resolve()
 YARN = ["yarn", "--link-folder", LINKS]
 PIP = ["python", "-m", "pip"]
 
-LAB_APP_DIR = pathlib.Path(sys.prefix) / "share/jupyter/lab"
+PREFIX = pathlib.Path(sys.prefix)
+LAB_APP_DIR = PREFIX / "share/jupyter/lab"
 LAB_APP_STATIC = LAB_APP_DIR / "static"
 LAB_APP_INDEX = LAB_APP_STATIC / "index.html"
 
 REPOS_YML = HERE / "repos.yml"
 REPOS = safe_load(REPOS_YML.read_text())["repos"]
 PATHS = {name: HERE / "repos" / name for name in REPOS}
+SPACES = HERE.glob("workspaces/*.jupyterlab-workspace")
 
 
 MISSING_LUMINO_DOCS = [
@@ -198,6 +200,7 @@ def task_link():
 def task_app():
     """rebuild apps with live modifications"""
     lab = PATHS.get("jupyterlab")
+    deploy = False
 
     if lab:
         dev_mode = lab / "dev_mode"
@@ -222,6 +225,8 @@ def task_app():
             targets=[dev_index],
         )
 
+        deploy = True
+
         yield dict(
             name="deploy",
             doc="deploy the build dev application to $PREFIX/share/jupyter/lab",
@@ -236,6 +241,14 @@ def task_app():
                 and None,
             ],
             targets=[LAB_APP_INDEX],
+        )
+
+    for space in SPACES:
+        stem = space.stem
+        yield dict(
+            name=f"space:{stem}",
+            task_dep=["app:deploy"] if deploy else [],
+            actions=[do("jupyter", "lab", "workspace", "import", space)],
         )
 
 
