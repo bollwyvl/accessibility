@@ -39,7 +39,7 @@ LAB_APP_INDEX = LAB_APP_STATIC / "index.html"
 REPOS_YML = HERE / "repos.yml"
 REPOS = safe_load(REPOS_YML.read_text())["repos"]
 PATHS = {name: HERE / "repos" / name for name in REPOS}
-SPACES = HERE.glob("workspaces/*.jupyterlab-workspace")
+SPACES = HERE.glob("spaces/*.jupyterlab-workspace")
 
 
 MISSING_LUMINO_DOCS = [
